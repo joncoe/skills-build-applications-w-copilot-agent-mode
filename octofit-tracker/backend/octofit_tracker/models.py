@@ -1,5 +1,6 @@
 from djongo import models
 
+
 class Team(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
@@ -11,21 +12,21 @@ class Team(models.Model):
 class User(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    team = models.ForeignKey(Team, on_delete=models.SET_NULL, null=True, related_name='members')
+    team_id = models.CharField(max_length=24, blank=True, null=True)  # ObjectId as string
     class Meta:
         db_table = 'users'
     def __str__(self):
         return self.name
 
 class Activity(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='activities')
+    user_id = models.CharField(max_length=24)  # ObjectId as string
     type = models.CharField(max_length=50)
     duration = models.IntegerField()  # in minutes
     date = models.DateField()
     class Meta:
         db_table = 'activities'
     def __str__(self):
-        return f"{self.user.name} - {self.type}"
+        return f"{self.user_id} - {self.type}"
 
 class Workout(models.Model):
     name = models.CharField(max_length=100)
@@ -37,9 +38,9 @@ class Workout(models.Model):
         return self.name
 
 class Leaderboard(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user_id = models.CharField(max_length=24)  # ObjectId as string
     score = models.IntegerField()
     class Meta:
         db_table = 'leaderboard'
     def __str__(self):
-        return f"{self.user.name} - {self.score}"
+        return f"{self.user_id} - {self.score}"
